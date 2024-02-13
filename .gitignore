@@ -21,3 +21,5 @@
 go.work
 
 *.creds
+
+__pycache__/

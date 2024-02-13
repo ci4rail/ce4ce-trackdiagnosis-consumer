@@ -7,7 +7,9 @@ nats stream create ce4ce-track-sim --subjects "TRACKSIM.>" --storage file --max-
 
 # add user
 nsc add user --name cemit --allow-pubsub "TRACKSIM.>"
+nsc edit user cemit --allow-pub '$JS.API.CONSUMER.>,$JS.ACK.>'
+nsc edit user cemit --allow-sub '_INBOX.>' 
 nsc push
 
 # generate creds
-nsc generate creds --name cemit
+nsc generate creds --name cemit > cemit.creds

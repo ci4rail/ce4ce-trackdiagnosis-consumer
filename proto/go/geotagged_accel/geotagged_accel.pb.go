@@ -32,7 +32,7 @@ type Chunk struct {
 
 	// sequence id
 	Id int32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	// delta time between individual acceleration samples
+	// delta time between individual acceleration samples in seconds
 	DeltaTs float32 `protobuf:"fixed32,2,opt,name=deltaTs,proto3" json:"deltaTs,omitempty"`
 	// 100ms time window chunks
 	AccelChunks []*Chunk_AccelChunk `protobuf:"bytes,3,rep,name=accelChunks,proto3" json:"accelChunks,omitempty"`
