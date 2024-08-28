@@ -1,0 +1,59 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: (c) 2024 Ci4Rail GmbH
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package geotagged_accel;
+option go_package = "./geotagged_accel";
+
+// a chunk typically contains data from approx 1s time window
+message Chunk {
+    message Position {
+      // GNSS location valid. If false, the other fields are not valid
+      bool valid = 1;
+
+      // WGS84 coordinates
+      // latitude in [deg]
+      double latitude = 2;
+
+      // longitude in [deg]
+      double longitude = 3;
+
+      // altitude in [m]
+      double altitude = 4;
+
+      // horizontal accuracy in [m]
+      double eph = 5;
+
+      // vertical accuracy in [m]
+      double epv = 6;
+    }
+
+    message AccelSample {
+        // x Acceleration in g
+        float x = 1;
+        // y Acceleration in g
+        float y = 2;
+        // z Acceleration in g
+        float z = 3;        
+    }
+
+    // AccelChunk contains data within a 100ms time window (approx.)
+    message AccelChunk {
+        // timestamp of first AccelSample
+        google.protobuf.Timestamp ts = 1;
+        // Position mapped to first sample
+        Position position = 3;
+        // Samples within this chunk
+        repeated AccelSample samples = 4;
+    } 
+    
+    // sequence id
+    int32 id = 1; 
+    // delta time between individual acceleration samples in seconds
+    float deltaTs = 2;
+    // 100ms time window chunks
+    repeated AccelChunk accelChunks = 3;
+}
