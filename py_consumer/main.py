@@ -1,23 +1,26 @@
 import asyncio
 import datetime
 import timeconv
-import geotagged_accel_pb2
+import geotagged_imu_pb2
+import zlib
 from stream import NatsStream
 
 
-SERVER = "tls://connect.ngs.global:4222"
-CREDS = "../cemit.creds"
-STREAM = "ce4ce-track-sim"
-SUBJECT = "TRACKSIM.*.accel"
+#SERVER = "tls://connect.ngs.global:4222"
+#CREDS = "../example.creds"
+#STREAM = " ce4celeipzig-trackdiag"
+SERVER = "nats://localhost:4222"
+CREDS  = None
+STREAM = "CE4CELeipzig"
+SUBJECT = "CE4CELeipzig.FloorIMU.>"
+DURABLE = "example-consumer"
 
-START_TIME = "2024-02-12T08:10:00+01:00"
+#START_TIME = "2024-02-12T08:10:00+01:00"
 
 async def main():
 
-    start_time=datetime.datetime.fromisoformat(START_TIME)
-
-    ns = await NatsStream.from_start_time(
-        SERVER, CREDS, STREAM, SUBJECT, start_time
+    ns = await NatsStream.from_durable(
+        SERVER, CREDS, STREAM, SUBJECT, DURABLE
     )
 
     timeout = 2.0
@@ -35,22 +38,24 @@ async def main():
         
         decode_msg(msg)
 
-        # if df2["ts"].iloc[0] >= start_time:
-        #     df = pd.concat([df, df2], axis=0)
-
-
     await ns.close()        
 
 def decode_msg(msg):
-    data = geotagged_accel_pb2.Chunk()
-    data.ParseFromString(msg.data)
+    # decompress using zlib
+    uncompressed = zlib.decompress(msg.data) 
 
-    print(f"Received message with ID {data.id}, deltaTs {data.deltaTs:.4f}, and {len(data.accelChunks)} accel chunks\n")
-    for accel_chunk in data.accelChunks:
-        print(f"  Accel chunk with timestamp {timeconv.pb_timestamp_to_local_datetime(accel_chunk.ts)} and {len(accel_chunk.samples)} samples\n")
+    data = geotagged_imu_pb2.GeoTaggedImu()
+    data.ParseFromString(uncompressed)
+
+    print(f"Received message with ID {data.id}, deltaTs {data.deltaTs:.4f}, and {len(data.imuChunks)} imu chunks\n")
+    for imu_chunk in data.imuChunks:
+        print(f"  imu chunk with timestamp {timeconv.pb_timestamp_to_local_datetime(imu_chunk.ts)}, {position_str(imu_chunk.position)} and {len(imu_chunk.samples)} samples\n")
         # print first three samples
-        for sample in accel_chunk.samples[:3]:
+        for sample in imu_chunk.samples[:3]:
             print(f"    Sample with x={sample.x:.4f}, y={sample.y:.4f}, z={sample.z:.4f}\n")
         print("    ...")
+
+def position_str(position):
+    return f"Position valid={position.valid}, ts={timeconv.pb_timestamp_to_local_datetime(position.ts)}, latitude={position.latitude}, longitude={position.longitude}, altitude={position.altitude}, epv={position.epv}, epv={position.epv}"
 
 asyncio.run(main())

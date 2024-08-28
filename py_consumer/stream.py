@@ -80,7 +80,20 @@ class NatsStream:
             delivery_policy=DeliverPolicy.BY_START_SEQUENCE,
             opt_start_seq=int(seq),
         )
-
+    @classmethod
+    async def from_durable(cls, server, credsfile_path, stream, subject, durable):
+        """
+        Create a new durable NatsStream object that starts from the last acknowledged message.
+        """
+        return await cls.create(
+            server,
+            credsfile_path,
+            stream,
+            subject,
+            delivery_policy=DeliverPolicy.ALL,
+            durable_name=durable,
+        )
+    
     async def next_msg(self, timeout=2.0):
         """
         Wait for next message.
