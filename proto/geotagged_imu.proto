@@ -5,55 +5,65 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-package geotagged_accel;
-option go_package = "./geotagged_accel";
+package geotagged_imu;
+option go_package = "./geotagged_imu";
 
-// a chunk typically contains data from approx 1s time window
-message Chunk {
+// A GeoTaggedImu message contains multiple imuChunks. 
+// Each imuChunk contains a timestamp, position and multiple samples.
+message GeoTaggedImu {
     message Position {
       // GNSS location valid. If false, the other fields are not valid
       bool valid = 1;
 
+      // timestamp of the position
+      google.protobuf.Timestamp ts = 2;
+
       // WGS84 coordinates
       // latitude in [deg]
-      double latitude = 2;
+      double latitude = 3;
 
       // longitude in [deg]
-      double longitude = 3;
+      double longitude = 4;
 
       // altitude in [m]
-      double altitude = 4;
+      double altitude = 5;
 
       // horizontal accuracy in [m]
-      double eph = 5;
+      float eph = 6;
 
       // vertical accuracy in [m]
-      double epv = 6;
+      float epv = 7;
     }
 
-    message AccelSample {
+    message ImuSample {
         // x Acceleration in g
         float x = 1;
         // y Acceleration in g
         float y = 2;
         // z Acceleration in g
         float z = 3;        
+        // yaw in deg/s
+        float yaw = 4;
+        // pitch in deg/s
+        float pitch = 5;
+        // roll in deg/s
+        float roll = 6;
     }
 
-    // AccelChunk contains data within a 100ms time window (approx.)
-    message AccelChunk {
+    // ImuChunk contains data within a time window
+    message ImuChunk {
         // timestamp of first AccelSample
         google.protobuf.Timestamp ts = 1;
         // Position mapped to first sample
         Position position = 3;
         // Samples within this chunk
-        repeated AccelSample samples = 4;
+        repeated ImuSample samples = 4;
     } 
     
-    // sequence id
+    // sequence id. Starts with 1, increments by 1 for each message, resets to 1 if edge app restarts
     int32 id = 1; 
     // delta time between individual acceleration samples in seconds
     float deltaTs = 2;
-    // 100ms time window chunks
-    repeated AccelChunk accelChunks = 3;
+    // time window chunks
+    repeated ImuChunk imuChunks = 3;
 }
