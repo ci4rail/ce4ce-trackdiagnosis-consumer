@@ -7,10 +7,11 @@ You need the credentials to access the NATS server (not provided in this repo).
 The NATS server provides the following streams:
 * ce4celeipzig-trackdiag - the track diagnosis data (IMU and Camera) for Leipzig
   * IMU Data is compressed and encoded with protobuf, see `proto/geotagged_imu.proto`
+  * Camera Data - not yet produced, will follow later
 
 The example `py_consumer/main_imu.py` shows how to extract the IMU data from the NATS server and decode it.
 
-## Run example
+## Run IMU example
 
 * Edit the `py_consumer/main_imu.py` and 
   * enter the path to the credentials file in the `CREDS` variable.
