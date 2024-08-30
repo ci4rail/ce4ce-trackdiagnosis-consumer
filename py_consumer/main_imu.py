@@ -1,17 +1,16 @@
 import asyncio
-import datetime
 import timeconv
 import geotagged_imu_pb2
 import zlib
 from stream import NatsStream
 
 
-#SERVER = "tls://connect.ngs.global:4222"
-#CREDS = "../example.creds"
-#STREAM = " ce4celeipzig-trackdiag"
-SERVER = "nats://localhost:4222"
-CREDS  = None
-STREAM = "CE4CELeipzig"
+SERVER = "tls://connect.ngs.global:4222"
+CREDS = "../example.creds"
+STREAM = "ce4celeipzig-trackdiag"
+# SERVER = "nats://localhost:4222"
+# CREDS  = None
+# STREAM = "CE4CELeipzig"
 SUBJECT = "CE4CELeipzig.FloorIMU.>"
 DURABLE = "example-consumer"
 
