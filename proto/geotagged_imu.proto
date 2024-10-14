@@ -33,6 +33,21 @@ message GeoTaggedImu {
 
       // vertical accuracy in [m]
       float epv = 7;
+
+      // heading of motion valid
+      bool head_mot_valid = 8;
+
+      // heading of motion in [deg], relative to true north
+      float head_motion = 9;
+
+      // heading of vehicle valid
+      bool head_veh_valid = 10;
+
+      // heading of vehicle in [deg], relative to true north
+      float head_vehicle = 11;
+
+      // speed in [m/s]
+      float ground_speed = 12;
     }
 
     message ImuSample {
