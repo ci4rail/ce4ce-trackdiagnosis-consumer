@@ -6,7 +6,7 @@ from stream import NatsStream
 
 
 SERVER = "tls://connect.ngs.global:4222"
-CREDS = "../example.creds"
+CREDS = "example.creds"
 STREAM = "ce4celeipzig-trackdiag"
 # SERVER = "nats://localhost:4222"
 # CREDS  = None
@@ -55,6 +55,6 @@ def decode_msg(msg):
         print("    ...")
 
 def position_str(position):
-    return f"Position valid={position.valid}, ts={timeconv.pb_timestamp_to_local_datetime(position.ts)}, latitude={position.latitude}, longitude={position.longitude}, altitude={position.altitude}, epv={position.epv}, epv={position.epv}"
+    return f"Position valid={position.valid}, ts={timeconv.pb_timestamp_to_local_datetime(position.ts)}, latitude={position.latitude}, longitude={position.longitude}, altitude={position.altitude}, epv={position.epv}, head_mot_valid={position.head_mot_valid}, head_motion={position.head_motion}, head_veh_valid={position.head_veh_valid}, head_vehicle={position.head_vehicle}, ground_speed={position.ground_speed}"
 
 asyncio.run(main())
